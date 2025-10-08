@@ -1,9 +1,14 @@
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class App {
     public static void main(String[] args) {
 
-        Matcher match;
+        String patronHombre = "\\{(?:Un|El)\\s+hombre\\}|\\{\\}";
+        String patronMedico = "\\{El médico\\}";
+
+        Pattern patternHombre = Pattern.compile(patronHombre);
+        Pattern patternMedico = Pattern.compile(patronMedico);
 
         String text = "\n{Un hombre} va al médico porque tiene un problema muy grave: cada vez que estornuda, {} se convierte en un animal diferente. {El médico} le dice que es un caso muy raro y que necesita hacerle unas pruebas. {Le} pone unos electrodos en la cabeza y le conecta a una máquina que mide su actividad cerebral." + //
                         "\n\t-Bien, ahora voy a provocarle un estornudo con este spray nasal y veremos qué pasa - dice {el médico}." +
@@ -22,7 +27,17 @@ public class App {
                         "\n\t-¿De verdad? ¿Y qué es? - pregunta el hombre, esperanzado." +
                         "\n\t-Tiene usted una alergia muy severa al spray nasal.";
 
-        System.out.printf(text);
+        Matcher matcherHombre = patternHombre.matcher(text);
+        Matcher matcherMedico = patternMedico.matcher(text);
 
+        StringBuilder output = new StringBuilder();
+
+        while(matcherHombre.find()) {
+            System.out.printf("\nhombre -> " + matcherHombre.start());
+        }
+
+        while(matcherMedico.find()) {
+            System.out.printf("\nmédico -> " + matcherMedico.start());
+        }
     }
 }
