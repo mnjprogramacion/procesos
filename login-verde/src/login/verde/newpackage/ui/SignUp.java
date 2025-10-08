@@ -37,7 +37,6 @@ public class SignUp extends javax.swing.JFrame {
         setTitle("Sign Up");
         setMaximumSize(new java.awt.Dimension(800, 500));
         setMinimumSize(new java.awt.Dimension(800, 500));
-        setPreferredSize(new java.awt.Dimension(800, 500));
         setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
