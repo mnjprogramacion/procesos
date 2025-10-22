@@ -27,17 +27,22 @@ public class App {
                         "\n\t-¿De verdad? ¿Y qué es? - pregunta el hombre, esperanzado." +
                         "\n\t-Tiene usted una alergia muy severa al spray nasal.";
 
+        // Hombre
         Matcher matcherHombre = patternHombre.matcher(text);
-        Matcher matcherMedico = patternMedico.matcher(text);
-
-        StringBuilder output = new StringBuilder();
-
-        while(matcherHombre.find()) {
-            System.out.printf("\nhombre -> " + matcherHombre.start());
+        StringBuffer sbHombre = new StringBuffer();
+        while (matcherHombre.find()) {
+            matcherHombre.appendReplacement(sbHombre, "José Miguel");
         }
+        matcherHombre.appendTail(sbHombre);
 
-        while(matcherMedico.find()) {
-            System.out.printf("\nmédico -> " + matcherMedico.start());
+        // Médico
+        Matcher matcherMedico = patternMedico.matcher(sbHombre.toString());
+        StringBuffer sbFinal = new StringBuffer();
+        while (matcherMedico.find()) {
+            matcherMedico.appendReplacement(sbFinal, "Mattias");
         }
+        matcherMedico.appendTail(sbFinal);
+
+        System.out.println(sbFinal.toString());
     }
 }
