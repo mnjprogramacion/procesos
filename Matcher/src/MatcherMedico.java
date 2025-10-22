@@ -1,7 +1,7 @@
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class App {
+public class MatcherMedico {
     public static void main(String[] args) {
 
         String patronHombre = "\\{(?:Un|El)\\s+hombre\\}|\\{\\}";
