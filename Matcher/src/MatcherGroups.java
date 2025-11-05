@@ -9,12 +9,9 @@ public class MatcherGroups {
         String regex = "'([^']*)'";
         Pattern p1 = Pattern.compile(regex);
         Matcher m1 = p1.matcher(text);
-        m1.find();
-
-        System.out.println(m1.group());
+       
+        while (m1.find()) {
+            System.out.println(m1.group(1));
+        }
     }
 }
-
-
-
-"(.+?)"
