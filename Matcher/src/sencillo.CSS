@@ -1,0 +1,61 @@
+/* Estilos básicos para el cuerpo y el contenedor */
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f4f4f9; /* Fondo muy claro */
+}
+
+.contenedor {
+    display: flex;
+    gap: 20px; /* Espacio entre los elementos */
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos comunes para todos los elementos */
+.elemento {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Color del texto */
+    font-weight: bold;
+    border-radius: 50%; /* Los hace circulares */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease; /* Transición para un efecto al pasar el ratón */
+}
+
+/* Efecto al pasar el ratón */
+.elemento:hover {
+    transform: scale(1.1);
+}
+
+/* Colores específicos para cada elemento */
+
+.rojo-color {
+    background-color: #e74c3c; /* Rojo Ladrillo */
+}
+
+.azul-color {
+    background-color: #3498db; /* Azul Brillante */
+}
+
+.verde-color {
+    background-color: #2ecc71; /* Verde Esmeralda */
+}
+
+.color-amarillo {
+    background-color: #f1c40f; /* Amarillo Sol */
+    color: #333; /* Texto más oscuro para contraste */
+}
+
+.color-purpura {
+    background-color: #9b59b6; /* Púrpura Amatista */
+}
