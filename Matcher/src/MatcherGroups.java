@@ -6,7 +6,7 @@ public class MatcherGroups {
 
         String text = "\nEl hombre dijo 'El perro no sabe leer' y el perro le contestó 'Si me hubieras preguntado sabrías la verdad'. 'Cuál es la verdad' preguntó el hombre. 'La verdad es ...' y el perro sonó como 'aaaaagh'.";
 
-        String regex = "'([^']*)'";
+        String regex = "'(.*?)'";
         Pattern p1 = Pattern.compile(regex);
         Matcher m1 = p1.matcher(text);
        
