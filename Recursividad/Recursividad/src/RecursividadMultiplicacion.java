@@ -9,6 +9,8 @@ public class RecursividadMultiplicacion {
     }
  
     public static void main(String[] args) {
+
+
         multiplicar(0, 0); // Comienza la recursión
     }
 }

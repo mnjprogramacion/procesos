@@ -9,23 +9,13 @@ public class MatcherAnimales {
                 "\n\nEn conclusión, los gatos y los perros son animales muy diferentes que ofrecen distintas experiencias a sus dueños. No hay una respuesta única a la pregunta de cuál es mejor, sino que depende de las características y necesidades de cada persona y de cada animal. Lo importante es elegir con responsabilidad y ofrecerles el mejor cuidado y cariño posible.";
 
         // gato -> placeholder
-        text = text.replaceAll("Gatos", "@@GATOS_CAP@@");
         text = text.replaceAll("gatos", "@@GATOS@@");
-        text = text.replaceAll("Gato", "@@GATO_CAP@@");
-        text = text.replaceAll("gato", "@@GATO@@");
 
         // perro -> gato
-        text = text.replaceAll("Perros", "Gatos");
         text = text.replaceAll("perros", "gatos");
-        text = text.replaceAll("Perro", "Gato");
-        text = text.replaceAll("perro", "gato");
 
         // gato (placeholder) -> perro
-        text = text.replaceAll("@@GATOS_CAP@@", "Perros");
         text = text.replaceAll("@@GATOS@@", "perros");
-        text = text.replaceAll("@@GATO_CAP@@", "Perro");
-        text = text.replaceAll("@@GATO@@", "perro");
-
         System.out.println(text);
     }
 }
