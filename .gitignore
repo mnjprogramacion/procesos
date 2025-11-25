@@ -13,6 +13,7 @@
 
 # Package Files #
 *.jar
+!RecursividadMultiplicacion.jar
 *.war
 *.nar
 *.ear
