@@ -28,5 +28,6 @@ public class RecursividadMultiplicacion {
 
         System.out.printf("Resultado: %d", multiplicar(n1, n2));
 
+        entrada.close();
     }
 }
