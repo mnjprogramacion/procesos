@@ -1,10 +1,8 @@
-import java.util.Scanner;
-
 public class RecursividadFibonacci {
  
     public static int fibonacci(int n) {
 
-        if ((n == 0)) {
+        if (n == 0){
             return 0;
         }
 
@@ -12,20 +10,14 @@ public class RecursividadFibonacci {
             return n;
         } else {
             n--;
-            return n1 + fibonacci(n1, n2);
+            return n + fibonacci(n);
         }
     }
  
     public static void main(String[] args) {
 
-        Scanner entrada = new Scanner(System.in);
-        int n;
-
-        System.out.printf("\nIntroduce un número: ");
-        n = entrada.nextInt();
+        int n = Integer.parseInt(args[0]);
 
         System.out.printf("Resultado: %d", fibonacci(n));
-
-        entrada.close();
     }
 }
