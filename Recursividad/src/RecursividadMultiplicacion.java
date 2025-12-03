@@ -1,5 +1,3 @@
-import java.util.Scanner;
-
 public class RecursividadMultiplicacion {
  
     public static int multiplicar(int n1, int n2) {
@@ -18,16 +16,9 @@ public class RecursividadMultiplicacion {
  
     public static void main(String[] args) {
 
-        Scanner entrada = new Scanner(System.in);
-        int n1, n2;
-
-        System.out.printf("\nIntroduce el primer número: ");
-        n1 = entrada.nextInt();
-        System.out.printf("Introduce el segundo número: ");
-        n2 = entrada.nextInt();
+        int n1 = Integer.parseInt(args[0]);
+        int n2 = Integer.parseInt(args[1]);
 
         System.out.printf("Resultado: %d", multiplicar(n1, n2));
-
-        entrada.close();
     }
 }
