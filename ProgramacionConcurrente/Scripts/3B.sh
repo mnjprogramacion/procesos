@@ -1,0 +1,1 @@
+echo $razones > razones.txt
