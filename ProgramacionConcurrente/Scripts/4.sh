@@ -24,3 +24,23 @@ case $CLASE_NUM in
 esac
 
 echo "¡Has elegido ser un $CLASE!"
+sleep 1
+
+# introducción
+echo ""
+echo "----------------------------------------"
+echo "Te adentras en el palacio prohibido..."
+sleep 1.5
+echo "No se oye nada... Pero te sientes observado..."
+sleep 1.5
+echo "Avanzas lentamente por un largo pasillo, hasta llegar a una puerta enorme."
+sleep 1.5
+echo "Decides abrir la puerta..."
+sleep 1.5
+echo ""
+echo "¡$JEFE ESTÁ AL OTRO LADO!"
+sleep 1.5
+echo "$JEFE se da la vuelta..."
+echo "\"Así que tú eres $HEROE... prepárate para morir.\""
+echo "----------------------------------------"
+echo ""
