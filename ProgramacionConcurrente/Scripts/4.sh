@@ -124,3 +124,22 @@ while [ $HP_JUGADOR -gt 0 ] && [ $HP_BOSS -gt 0 ]; do
     echo "----------------------------------------"
     sleep 1
 done
+
+# Final
+echo ""
+echo "========================================"
+if [ $HP_JUGADOR -gt 0 ]; then
+    echo "¡VICTORIA!"
+    sleep 1.5
+    echo "$HEROE el $CLASE ha derrotado a $JEFE."
+    sleep 1.5
+    echo "Tu leyenda perdurará por los siglos venideros."
+else
+    echo "HAS MUERTO..."
+    sleep 1.5
+    echo "$JEFE se ríe sobre tu cadáver."
+    sleep 1.5
+    echo "A ver si vamos espabilando."
+fi
+echo "========================================"
+echo ""
