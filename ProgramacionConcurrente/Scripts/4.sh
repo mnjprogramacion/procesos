@@ -77,3 +77,50 @@ for i in {1..40}; do
 done
 echo ""
 
+# Bucle pelea
+while [ $HP_JUGADOR -gt 0 ] && [ $HP_BOSS -gt 0 ]; do
+    
+    echo "$HEROE: $HP_JUGADOR HP  vs  $JEFE: $HP_BOSS HP"
+    
+    # Turno jugador
+    OBJETIVO_ALEATORIO=$((RANDOM % 11))
+    
+    echo "¡Tu turno! Elige un ataque (número del 0 al 10):"
+    read -p "> " NUM_USER
+
+    if [[ ! $NUM_USER =~ ^[0-9]+$ ]]; then
+        echo "No has introducido un número válido."
+        HP_JUGADOR=$((HP_JUGADOR - 1))
+        echo "Pierdes 1 de vida por listo."
+    else
+        DANO=$((OBJETIVO_ALEATORIO - NUM_USER))
+        if [ $DANO -lt 0 ]; then DANO=$((DANO * -1)); fi
+        
+        DANO=$((DANO + DANO_EXTRA))
+        echo "Tu golpe tiene una fuerza de $DANO."
+        
+        if [ $DANO -lt 0 ]; then 
+            echo "¡$HEROE está tan perdido que le ha sumado vida a $JEFE!"
+        fi
+        
+        HP_BOSS=$((HP_BOSS - DANO))
+    fi
+
+    # Comprobación vida jefe
+    if [ $HP_BOSS -le 0 ]; then break; fi
+    
+    sleep 1
+
+    # Turno jefe
+    ATAQUE_JEFE=$((RANDOM % 11))
+    DANO_JEFE=$((ATAQUE_JEFE - OBJETIVO_ALEATORIO))
+    if [ $DANO_JEFE -lt 0 ]; then DANO_JEFE=$((DANO_JEFE * -1)); fi
+
+    echo "$JEFE contrataca..."
+    echo "Te hace $DANO_JEFE de daño."
+    
+    HP_JUGADOR=$((HP_JUGADOR - DANO_JEFE))
+    
+    echo "----------------------------------------"
+    sleep 1
+done
