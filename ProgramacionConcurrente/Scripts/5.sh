@@ -7,53 +7,78 @@ OPERADOR="+"
 ERROR=0
 GREEN="\e[32m"
 BLUE="\e[36m"
+RED="\e[31m"
 RESET="\e[0m"
 
 # Funciones
 
-suma (){
+error_msg(){
+    echo -e "${RED}Error: $1${RESET}"
+}
+
+validar_numeros(){
+    if ! [[ "$NUM_1" =~ ^-?[0-9]+$ ]] || ! [[ "$NUM_2" =~ ^-?[0-9]+$ ]]; then
+        error_msg "Debes introducir números enteros válidos."
+        return 1
+    fi
+    return 0
+}
+
+suma(){
     RES=$((NUM_1 + NUM_2))
     echo ""
     echo -e "Resultado: ${GREEN}$RES${RESET}"
     echo ""
 }
 
-resta (){
+resta(){
     RES=$((NUM_1 - NUM_2))
     echo ""
     echo -e "Resultado: ${GREEN}$RES${RESET}"
     echo ""
 }
 
-division (){
+division(){
+    if [ "$NUM_2" -eq 0 ]; then
+        echo ""
+        error_msg "No se puede dividir por cero."
+        echo ""
+        return
+    fi
     RES=$((NUM_1 / NUM_2))
     echo ""
     echo -e "Resultado: ${GREEN}$RES${RESET}"
     echo ""
 }
 
-multiplicacion (){
+multiplicacion(){
     RES=$((NUM_1 * NUM_2))
     echo ""
     echo -e "Resultado: ${GREEN}$RES${RESET}"
     echo ""
 }
 
-modulo (){
+modulo(){
+    if [ "$NUM_2" -eq 0 ]; then
+        echo ""
+        error_msg "No se puede calcular módulo con cero."
+        echo ""
+        return
+    fi
     RES=$((NUM_1 % NUM_2))
     echo ""
     echo -e "Resultado: ${GREEN}$RES${RESET}"
     echo ""
 }
 
-exponencial (){
+exponencial(){
     RES=$((NUM_1 ** NUM_2))
     echo ""
     echo -e "Resultado: ${GREEN}$RES${RESET}"
     echo ""
 }
 
-menu (){
+menu(){
     while [ $ERROR -eq 0 ]; do
 
         echo "Introduce un número:"
@@ -78,17 +103,17 @@ menu (){
         echo -ne "${RESET}"
 
         case $OPERADOR in
-            "1"|"+"|"suma") suma
+            "1"|"+"|"suma") validar_numeros && suma
             ;;
-            "2"|"-"|"resta") resta
+            "2"|"-"|"resta") validar_numeros && resta
             ;;
-            "3"|"/"|"división"|"division") division
+            "3"|"/"|"división"|"division") validar_numeros && division
             ;;
-            "4"|"*"|"multipliación"|"multipliacion") multiplicacion
+            "4"|"*"|"multipliación"|"multiplicacion") validar_numeros && multiplicacion
             ;;
-            "5"|"%"|"módulo"|"modulo") modulo
+            "5"|"%"|"módulo"|"modulo") validar_numeros && modulo
             ;;
-            "6"|"**"|"exponencial") exponencial
+            "6"|"**"|"exponencial") validar_numeros && exponencial
             ;;
             "7"|"salir") break
             ;;
