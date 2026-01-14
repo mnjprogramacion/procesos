@@ -7,6 +7,7 @@ OPERADOR="+"
 GREEN="\e[32m"
 BLUE="\e[36m"
 RED="\e[31m"
+BOLD="\e[1m"
 RESET="\e[0m"
 
 # Funciones
@@ -97,7 +98,7 @@ menu(){
             echo "4) * (multipliación)"
             echo "5) % (módulo)"
             echo "6) ** (exponencial)"
-            echo "7) salir"
+            echo -e "${BOLD}7) salir${BOLD}"
             read -p "> $(echo -e $BLUE)" OPERADOR
             echo -ne "${RESET}"
 
@@ -114,7 +115,7 @@ menu(){
                 ;;
                 "6"|"**"|"exponencial") validar_numeros && exponencial
                 ;;
-                "7"|"salir") break
+                "7"|"salir del programa") break
                 ;;
                 *) echo "Operador no válido."
                 ;;
