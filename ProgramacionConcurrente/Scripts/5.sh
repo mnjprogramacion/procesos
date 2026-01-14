@@ -4,7 +4,6 @@ NUM_1=0
 NUM_2=0
 RES=0
 OPERADOR="+"
-ERROR=0
 GREEN="\e[32m"
 BLUE="\e[36m"
 RED="\e[31m"
@@ -79,48 +78,48 @@ exponencial(){
 }
 
 menu(){
-    while [ $ERROR -eq 0 ]; do
+    while :
+        do
+            echo "Introduce un número:"
+            read -p "> $(echo -e $BLUE)" NUM_1
+            echo -ne "${RESET}"
 
-        echo "Introduce un número:"
-        read -p "> $(echo -e $BLUE)" NUM_1
-        echo -ne "${RESET}"
+            echo "Introduce otro número:"
+            read -p "> $(echo -e $BLUE)" NUM_2
+            echo -ne "${RESET}"
 
-        echo "Introduce otro número:"
-        read -p "> $(echo -e $BLUE)" NUM_2
-        echo -ne "${RESET}"
+            echo ""
+            echo "Elige un operador de la lista:"
+            echo ""
+            echo "1) + (suma)"
+            echo "2) - (resta)"
+            echo "3) / (división)"
+            echo "4) * (multipliación)"
+            echo "5) % (módulo)"
+            echo "6) ** (exponencial)"
+            echo "7) salir"
+            read -p "> $(echo -e $BLUE)" OPERADOR
+            echo -ne "${RESET}"
 
-        echo ""
-        echo "Elige un operador de la lista:"
-        echo ""
-        echo "1) + (suma)"
-        echo "2) - (resta)"
-        echo "3) / (división)"
-        echo "4) * (multipliación)"
-        echo "5) % (módulo)"
-        echo "6) ** (exponencial)"
-        echo "7) salir"
-        read -p "> $(echo -e $BLUE)" OPERADOR
-        echo -ne "${RESET}"
-
-        case $OPERADOR in
-            "1"|"+"|"suma") validar_numeros && suma
-            ;;
-            "2"|"-"|"resta") validar_numeros && resta
-            ;;
-            "3"|"/"|"división"|"division") validar_numeros && division
-            ;;
-            "4"|"*"|"multipliación"|"multiplicacion") validar_numeros && multiplicacion
-            ;;
-            "5"|"%"|"módulo"|"modulo") validar_numeros && modulo
-            ;;
-            "6"|"**"|"exponencial") validar_numeros && exponencial
-            ;;
-            "7"|"salir") break
-            ;;
-            *) echo "Operador no válido."
-            ;;
-        esac
-    done
+            case $OPERADOR in
+                "1"|"+"|"suma") validar_numeros && suma
+                ;;
+                "2"|"-"|"resta") validar_numeros && resta
+                ;;
+                "3"|"/"|"división"|"division") validar_numeros && division
+                ;;
+                "4"|"*"|"multipliación"|"multiplicacion") validar_numeros && multiplicacion
+                ;;
+                "5"|"%"|"módulo"|"modulo") validar_numeros && modulo
+                ;;
+                "6"|"**"|"exponencial") validar_numeros && exponencial
+                ;;
+                "7"|"salir") break
+                ;;
+                *) echo "Operador no válido."
+                ;;
+            esac
+        done
 }
 
 # Inicio del programa
