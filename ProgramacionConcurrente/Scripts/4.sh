@@ -4,7 +4,7 @@ HP_JUGADOR=100
 HP_BOSS=100
 DANO_EXTRA=0
 HEROE=${1:-"Aventurero"}
-JEFE="El Rey del Bug"
+JEFE=${2:-"El Rey del Bug"}
 
 # Selección de clase
 clear
