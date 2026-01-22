@@ -81,7 +81,6 @@ exponencial(){
 menu(){
     while :
         do
-            echo ""
             echo "Elige un operador de la lista:"
             echo ""
             echo "1) + (suma)"
@@ -94,10 +93,11 @@ menu(){
             read -p "> $(echo -e $BLUE)" OPERADOR
             echo -ne "${RESET}"
 
-            if [ $OPERADOR == 7 ]; then
+            if [[ "$OPERADOR" == "7" ]]; then
                 break
             fi
 
+            echo ""
             echo "Introduce un número:"
             read -p "> $(echo -e $BLUE)" NUM_1
             echo -ne "${RESET}"
@@ -124,6 +124,9 @@ menu(){
                 *) echo "Operador no válido."
                 ;;
             esac
+
+            echo "----------------------------------------"
+            echo ""
         done
 }
 
