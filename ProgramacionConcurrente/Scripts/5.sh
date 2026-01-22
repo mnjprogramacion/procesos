@@ -81,14 +81,6 @@ exponencial(){
 menu(){
     while :
         do
-            echo "Introduce un número:"
-            read -p "> $(echo -e $BLUE)" NUM_1
-            echo -ne "${RESET}"
-
-            echo "Introduce otro número:"
-            read -p "> $(echo -e $BLUE)" NUM_2
-            echo -ne "${RESET}"
-
             echo ""
             echo "Elige un operador de la lista:"
             echo ""
@@ -98,8 +90,20 @@ menu(){
             echo "4) * (multipliación)"
             echo "5) % (módulo)"
             echo "6) ** (exponencial)"
-            echo -e "${BOLD}7) salir${BOLD}"
+            echo -e "${BOLD}7) salir${RESET}"
             read -p "> $(echo -e $BLUE)" OPERADOR
+            echo -ne "${RESET}"
+
+            if [ $OPERADOR == 7 ]; then
+                break
+            fi
+
+            echo "Introduce un número:"
+            read -p "> $(echo -e $BLUE)" NUM_1
+            echo -ne "${RESET}"
+
+            echo "Introduce otro número:"
+            read -p "> $(echo -e $BLUE)" NUM_2
             echo -ne "${RESET}"
 
             case $OPERADOR in
