@@ -17,8 +17,7 @@ CACTUS="🌵"
 METEORITO="☄️"
 
 # Configuración de obstáculos
-ESPACIO_MIN=12
-MAX_OBS=3
+ESPACIO_MIN=10
 
 # Arrays para múltiples obstáculos
 declare -a OBS_X=()
@@ -44,8 +43,9 @@ while true; do
     # Leer tecla sin bloquear
     tecla=""
     read -rsn1 -t 0.2 tecla 2>/dev/null || true
-    [[ "$tecla" == "q" || "$tecla" == "Q" ]] && break
-    [[ "$tecla" == "s" || "$tecla" == "S" ]] && [[ $SALTO -eq 0 ]] && SALTO=3
+    tecla="${tecla,,}"  # Convertir a minúscula
+    [[ "$tecla" == "q" ]] && break
+    [[ "$tecla" == "s" && $SALTO -eq 0 ]] && SALTO=3
     
     # Salto (baja cada frame)
     [[ $SALTO -gt 0 ]] && ((SALTO--))
@@ -66,18 +66,16 @@ while true; do
     OBS_TIPO=("${nuevos_tipo[@]}")
     
     # Crear nuevo obstáculo si hay espacio
-    if [[ ${#OBS_X[@]} -lt $MAX_OBS ]]; then
-        # Buscar el obstáculo más cercano al inicio (posición más baja)
-        menor=999
-        for pos in "${OBS_X[@]}"; do
-            [[ $pos -lt $menor ]] && menor=$pos
-        done
-        # Solo crear si el obstáculo más cercano ya ha pasado el espacio mínimo
-        if [[ $menor -ge $ESPACIO_MIN ]] || [[ ${#OBS_X[@]} -eq 0 ]]; then
-            if [[ $((RANDOM % 5)) -eq 0 ]]; then  # 20% probabilidad
-                OBS_X+=(0)
-                OBS_TIPO+=($((RANDOM % 2)))
-            fi
+    # Buscar el obstáculo más cercano al inicio (posición más baja)
+    menor=999
+    for pos in "${OBS_X[@]}"; do
+        [[ $pos -lt $menor ]] && menor=$pos
+    done
+    # Solo crear si el obstáculo más cercano ya ha pasado el espacio mínimo
+    if [[ $menor -ge $ESPACIO_MIN ]] || [[ ${#OBS_X[@]} -eq 0 ]]; then
+        if [[ $((RANDOM % 5)) -eq 0 ]]; then  # 20% probabilidad
+            OBS_X+=(0)
+            OBS_TIPO+=($((RANDOM % 2)))
         fi
     fi
     
@@ -154,5 +152,3 @@ while true; do
         clear
     fi
 done
-
-echo "¡Hasta luego!"
