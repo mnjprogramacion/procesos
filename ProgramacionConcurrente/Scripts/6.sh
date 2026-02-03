@@ -4,6 +4,7 @@ ANCHO=40
 DINO_POS=35
 SALTO=0
 PUNTOS=0
+ESPACIO_MIN=10
 
 # Colores
 C_MARRON="\e[38;5;130m"
@@ -16,13 +17,11 @@ DINO="🦖"
 CACTUS="🌵"
 METEORITO="☄️"
 
-# Configuración de obstáculos
-ESPACIO_MIN=10
-
-# Arrays para múltiples obstáculos
+# Arrays para obstáculos
 declare -a OBS_X=()
 declare -a OBS_TIPO=()
 
+# Terminal
 trap "tput cnorm; stty sane; clear; exit" EXIT INT
 tput civis
 clear
@@ -43,7 +42,7 @@ while true; do
     # Leer tecla sin bloquear
     tecla=""
     read -rsn1 -t 0.2 tecla 2>/dev/null || true
-    tecla="${tecla,,}"  # Convertir a minúscula
+    tecla="${tecla,,}"
     [[ "$tecla" == "q" ]] && break
     [[ "$tecla" == "s" && $SALTO -eq 0 ]] && SALTO=3
     
@@ -73,7 +72,7 @@ while true; do
     done
     # Solo crear si el obstáculo más cercano ya ha pasado el espacio mínimo
     if [[ $menor -ge $ESPACIO_MIN ]] || [[ ${#OBS_X[@]} -eq 0 ]]; then
-        if [[ $((RANDOM % 5)) -eq 0 ]]; then  # 20% probabilidad
+        if [[ $((RANDOM % 5)) -eq 0 ]]; then
             OBS_X+=(0)
             OBS_TIPO+=($((RANDOM % 2)))
         fi
@@ -125,16 +124,16 @@ while true; do
         fi
     done
     
-    # Dibujar todo de una vez
+    # Imprimir todo
     printf "Puntos: %-10s\n\n%s\n${C_MARRON}%s${C_RESET}\n" "$PUNTOS" "$aire" "$suelo"
     
     # Colisión con cualquier obstáculo
     COLISION=0
     for ((j=0; j<${#OBS_X[@]}; j++)); do
         if [[ ${OBS_X[j]} -ge $((DINO_POS-1)) && ${OBS_X[j]} -le $((DINO_POS+1)) ]]; then
-            # Cactus: muere si NO salta
+            # Cactus
             [[ ${OBS_TIPO[j]} -eq 0 && $SALTO -eq 0 ]] && COLISION=1
-            # Meteorito: muere si SALTA
+            # Meteorito
             [[ ${OBS_TIPO[j]} -eq 1 && $SALTO -gt 0 ]] && COLISION=1
         fi
     done
