@@ -4,11 +4,11 @@ public class RecursividadFactorial {
         if (n <= 1) {
             return 1;
         }
-        return n * factorial(n - 1);
+        return RecursividadMultiplicacion.multiplicar(n, factorial(n - 1));
     }
 
     public static int multiplicarFactoriales(int n1, int n2) {
-        return factorial(n1) * factorial(n2);
+        return RecursividadMultiplicacion.multiplicar(factorial(n1), factorial(n2));
     }
  
     public static void main(String[] args) {
