@@ -36,7 +36,13 @@ public class MainFrame extends JFrame {
     public MainFrame(String ffmpegPath) {
         this.ffmpegPath = ffmpegPath;
         this.ffmpegService = new FFmpegService(ffmpegPath);
-        this.ffprobeService = new FFprobeService(ffmpegPath.replace("ffmpeg", "ffprobe"));
+        // Replace only the filename component to avoid corrupting directory names
+        File probeFile = new File(ffmpegPath);
+        String probeFilename = probeFile.getName().replace("ffmpeg", "ffprobe");
+        String ffprobePath = probeFile.getParent() != null
+                ? new File(probeFile.getParent(), probeFilename).getPath()
+                : probeFilename;
+        this.ffprobeService = new FFprobeService(ffprobePath);
         this.fileScanner = new FileScanner(ffprobeService);
         
         ffmpegService.setOutputListener(this::log);

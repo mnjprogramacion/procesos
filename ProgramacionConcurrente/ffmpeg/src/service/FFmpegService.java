@@ -23,8 +23,12 @@ public class FFmpegService {
     
     public FFmpegService(String ffmpegPath) {
         this.ffmpegPath = ffmpegPath;
-        // Asumir ffprobe junto a ffmpeg
-        this.ffprobePath = ffmpegPath.replace("ffmpeg", "ffprobe");
+        // Replace only the filename component to avoid corrupting directory names
+        File f = new File(ffmpegPath);
+        String probeFilename = f.getName().replace("ffmpeg", "ffprobe");
+        this.ffprobePath = f.getParent() != null
+                ? new File(f.getParent(), probeFilename).getPath()
+                : probeFilename;
     }
     
     public void setFFprobePath(String path) {

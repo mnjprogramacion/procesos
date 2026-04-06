@@ -19,7 +19,13 @@ public class ConsoleInterface {
     public ConsoleInterface(String ffmpegPath) {
         this.ffmpegPath = ffmpegPath;
         this.ffmpegService = new FFmpegService(ffmpegPath);
-        this.ffprobeService = new FFprobeService(ffmpegPath.replace("ffmpeg", "ffprobe"));
+        // Replace only the filename component to avoid corrupting directory names
+        File f = new File(ffmpegPath);
+        String probeFilename = f.getName().replace("ffmpeg", "ffprobe");
+        String ffprobePath = f.getParent() != null
+                ? new File(f.getParent(), probeFilename).getPath()
+                : probeFilename;
+        this.ffprobeService = new FFprobeService(ffprobePath);
         this.fileScanner = new FileScanner(ffprobeService);
         this.scanner = new Scanner(System.in);
     }

@@ -68,9 +68,10 @@ public class FFmpegLocator {
             File f = new File(path);
             if (f.exists() && f.canExecute()) {
                 ffmpegPath = path;
-                String probePath = path.replace("ffmpeg", "ffprobe");
-                if (new File(probePath).exists()) {
-                    ffprobePath = probePath;
+                // Replace only the filename component to avoid corrupting directory names
+                File probeFile = new File(f.getParent(), f.getName().replace("ffmpeg", "ffprobe"));
+                if (probeFile.exists()) {
+                    ffprobePath = probeFile.getPath();
                 }
                 return ffmpegPath;
             }
@@ -99,11 +100,12 @@ public class FFmpegLocator {
                 command.add(FFMPEG_EXE);
                 command.add("-type");
                 command.add("f");
-                command.add("2>/dev/null");
+                // Note: "2>/dev/null" must NOT be added here — ProcessBuilder does not use a shell
+                // and would pass it as a literal argument to find. Stderr is discarded below.
             }
             
             ProcessBuilder pb = new ProcessBuilder(command);
-            pb.redirectErrorStream(true);
+            pb.redirectError(ProcessBuilder.Redirect.DISCARD);
             Process process = pb.start();
             
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
