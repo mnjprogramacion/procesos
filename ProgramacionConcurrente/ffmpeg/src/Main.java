@@ -1,6 +1,7 @@
 import java.awt.GraphicsEnvironment;
 import console.ConsoleInterface;
 import ui.MainFrame;
+import ui.FFmpegSearchDialog;
 import service.FFmpegLocator;
 
 /**
@@ -22,6 +23,9 @@ public class Main {
             }
         }
         
+        // Decidir modo de ejecución
+        boolean useConsole = forceConsole || GraphicsEnvironment.isHeadless();
+        
         // Localizar FFmpeg
         FFmpegLocator locator = new FFmpegLocator();
         if (ffmpegPath != null) {
@@ -29,38 +33,48 @@ public class Main {
         }
         
         String ffmpeg = locator.locate();
-        if (ffmpeg == null) {
-            System.out.println("Buscando FFmpeg en el sistema...");
-            ffmpeg = locator.searchInSystem();
-            
-            if (ffmpeg == null) {
-                System.out.println("FFmpeg no encontrado en el sistema.");
-                System.out.println("Descarga FFmpeg desde: https://ffmpeg.org/download.html");
-                if (!forceConsole && !GraphicsEnvironment.isHeadless()) {
-                    locator.openDownloadPage();
-                }
-                System.exit(1);
-            }
-        }
-        
-        System.out.println("FFmpeg encontrado: " + ffmpeg);
-        
-        // Obtener ruta de ffprobe desde el locator
-        String ffprobe = locator.getFFprobePath();
-        
-        // Decidir modo de ejecución
-        boolean useConsole = forceConsole || GraphicsEnvironment.isHeadless();
-        
-        final String ffmpegFinal = ffmpeg;
-        final String ffprobeFinal = ffprobe;
         
         if (useConsole) {
-            ConsoleInterface console = new ConsoleInterface(ffmpegFinal, ffprobeFinal);
+            // Modo consola: búsqueda completa antes de arrancar
+            if (ffmpeg == null) {
+                System.out.println("Buscando FFmpeg en el sistema...");
+                ffmpeg = locator.searchInSystem();
+                
+                if (ffmpeg == null) {
+                    System.out.println("FFmpeg no encontrado en el sistema.");
+                    System.out.println("Descarga FFmpeg desde: https://ffmpeg.org/download.html");
+                    System.exit(1);
+                }
+            }
+            
+            System.out.println("FFmpeg encontrado: " + ffmpeg);
+            String ffprobe = locator.getFFprobePath();
+            ConsoleInterface console = new ConsoleInterface(ffmpeg, ffprobe);
             console.run();
         } else {
+            // Modo GUI: abrir ventana primero, luego buscar ffmpeg si hace falta
+            final String ffmpegFound = ffmpeg;
+            final String ffprobeFound = (ffmpeg != null) ? locator.getFFprobePath() : null;
+            
             javax.swing.SwingUtilities.invokeLater(() -> {
-                MainFrame frame = new MainFrame(ffmpegFinal, ffprobeFinal);
+                MainFrame frame = new MainFrame();
                 frame.setVisible(true);
+                
+                if (ffmpegFound != null) {
+                    // FFmpeg ya encontrado, inicializar directamente
+                    System.out.println("FFmpeg encontrado: " + ffmpegFound);
+                    frame.initServices(ffmpegFound, ffprobeFound);
+                } else {
+                    // Mostrar diálogo de búsqueda
+                    FFmpegSearchDialog dialog = new FFmpegSearchDialog(frame);
+                    dialog.setVisible(true);
+                    
+                    if (dialog.getFFmpegPath() != null) {
+                        frame.initServices(dialog.getFFmpegPath(), dialog.getFFprobePath());
+                    } else {
+                        System.exit(0);
+                    }
+                }
             });
         }
     }

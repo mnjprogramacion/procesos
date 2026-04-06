@@ -13,6 +13,7 @@ public class FFmpegLocator {
     private String customPath = null;
     private String ffmpegPath = null;
     private String ffprobePath = null;
+    private java.util.function.Consumer<String> statusListener = null;
     
     private static final String DOWNLOAD_URL = "https://ffmpeg.org/download.html";
     private static final boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("win");
@@ -23,37 +24,58 @@ public class FFmpegLocator {
         this.customPath = path;
     }
     
+    public void setStatusListener(java.util.function.Consumer<String> listener) {
+        this.statusListener = listener;
+    }
+    
+    public static String getFFmpegExeName() {
+        return FFMPEG_EXE;
+    }
+    
+    public static String getDownloadUrl() {
+        return DOWNLOAD_URL;
+    }
+    
+    private void status(String message) {
+        System.out.println(message);
+        if (statusListener != null) {
+            statusListener.accept(message);
+        }
+    }
+    
     /**
      * Intenta localizar ffmpeg.
      * @return Ruta a ffmpeg o null si no se encuentra
      */
     public String locate() {
         // Paso 1: ruta personalizada
-        if (customPath != null) {
-            System.out.println("[Paso 1/3] Verificando ruta personalizada: " + customPath);
+        if (customPath == null) {
+            status("[Paso 1/3] Ruta personalizada no proporcionada.");
+        } else {
+            status("[Paso 1/3] Verificando ruta personalizada: " + customPath);
             File custom = new File(customPath);
-            if (custom.exists() && custom.canExecute()) {
+            if (custom.exists() && custom.canExecute() && isWorkingExecutable(customPath)) {
                 ffmpegPath = customPath;
                 File probe = new File(custom.getParent(), FFPROBE_EXE);
                 if (probe.exists()) {
                     ffprobePath = probe.getAbsolutePath();
                 }
-                System.out.println("         -> Encontrado en ruta personalizada.");
+                status("         -> Encontrado en ruta personalizada.");
                 return ffmpegPath;
             } else {
-                System.out.println("         -> No encontrado o no ejecutable. Continuando...");
+                status("         -> No encontrado o no ejecutable. Continuando...");
             }
         }
         
         // Paso 2: verificar si está en PATH
-        System.out.println("[Paso 2/3] Buscando " + FFMPEG_EXE + " en el PATH del sistema...");
-        if (isInPath("ffmpeg")) {
+        status("[Paso 2/3] Buscando " + FFMPEG_EXE + " en el PATH del sistema...");
+        if (isInPath("ffmpeg") && isWorkingExecutable("ffmpeg")) {
             ffmpegPath = "ffmpeg";
             ffprobePath = "ffprobe";
-            System.out.println("         -> Encontrado en PATH.");
+            status("         -> Encontrado en PATH.");
             return ffmpegPath;
         } else {
-            System.out.println("         -> No encontrado en PATH. Continuando...");
+            status("         -> No encontrado en PATH. Continuando...");
         }
         
         // Paso 3: ubicaciones comunes predefinidas
@@ -71,21 +93,21 @@ public class FFmpegLocator {
                 System.getProperty("user.home") + "/ffmpeg/bin/ffmpeg"
             };
         
-        System.out.println("[Paso 3/3] Buscando en ubicaciones comunes...");
+        status("[Paso 3/3] Buscando en ubicaciones comunes...");
         for (String path : commonPaths) {
-            System.out.println("         -> Probando: " + path);
+            status("         -> Probando: " + path);
             File f = new File(path);
-            if (f.exists() && f.canExecute()) {
+            if (f.exists() && f.canExecute() && isWorkingExecutable(path)) {
                 ffmpegPath = path;
                 File probeFile = new File(f.getParent(), f.getName().replace("ffmpeg", "ffprobe"));
                 if (probeFile.exists()) {
                     ffprobePath = probeFile.getPath();
                 }
-                System.out.println("         -> Encontrado en ubicación común.");
+                status("         -> Encontrado en ubicación común.");
                 return ffmpegPath;
             }
         }
-        System.out.println("         -> No encontrado en ninguna ubicación común.");
+        status("         -> No encontrado en ninguna ubicación común.");
         
         return null;
     }
@@ -94,8 +116,8 @@ public class FFmpegLocator {
      * Busca ffmpeg recursivamente en el sistema usando comandos.
      */
     public String searchInSystem() {
-        System.out.println("[Búsqueda recursiva] Explorando el sistema de archivos completo en busca de " + FFMPEG_EXE + "...");
-        System.out.println("                     (Este proceso puede tardar varios minutos)");
+        status("[Búsqueda recursiva] Explorando el sistema de archivos completo en busca de " + FFMPEG_EXE + "...");
+        status("                     (Este proceso puede tardar varios minutos)");
         
         try {
             List<String> command = new ArrayList<>();
@@ -104,7 +126,7 @@ public class FFmpegLocator {
                 command.add("/R");
                 command.add("C:\\");
                 command.add(FFMPEG_EXE);
-                System.out.println("                     Ejecutando: where /R C:\\ " + FFMPEG_EXE);
+                status("                     Ejecutando: where /R C:\\ " + FFMPEG_EXE);
             } else {
                 command.add("find");
                 command.add("/");
@@ -114,7 +136,7 @@ public class FFmpegLocator {
                 command.add("f");
                 // Note: "2>/dev/null" must NOT be added here — ProcessBuilder does not use a shell
                 // and would pass it as a literal argument to find. Stderr is discarded below.
-                System.out.println("                     Ejecutando: find / -name " + FFMPEG_EXE + " -type f");
+                status("                     Ejecutando: find / -name " + FFMPEG_EXE + " -type f");
             }
             
             ProcessBuilder pb = new ProcessBuilder(command);
@@ -124,16 +146,16 @@ public class FFmpegLocator {
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println("                     Analizando: " + line.trim());
+                status("                     Analizando: " + line.trim());
                 File f = new File(line.trim());
-                if (f.exists() && f.canExecute()) {
+                if (f.exists() && f.canExecute() && isWorkingExecutable(f.getAbsolutePath())) {
                     ffmpegPath = f.getAbsolutePath();
                     File probe = new File(f.getParent(), FFPROBE_EXE);
                     if (probe.exists()) {
                         ffprobePath = probe.getAbsolutePath();
                     }
                     process.destroy();
-                    System.out.println("                     -> Encontrado: " + ffmpegPath);
+                    status("                     -> Encontrado: " + ffmpegPath);
                     return ffmpegPath;
                 }
             }
@@ -143,7 +165,7 @@ public class FFmpegLocator {
             System.err.println("[Búsqueda recursiva] Error: " + e.getMessage());
         }
         
-        System.out.println("[Búsqueda recursiva] " + FFMPEG_EXE + " no encontrado en el sistema.");
+        status("[Búsqueda recursiva] " + FFMPEG_EXE + " no encontrado en el sistema.");
         return null;
     }
     
@@ -174,6 +196,25 @@ public class FFmpegLocator {
             ProcessBuilder pb = new ProcessBuilder(command);
             pb.redirectErrorStream(true);
             Process process = pb.start();
+            int exitCode = process.waitFor();
+            return exitCode == 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    /**
+     * Verifica que el ejecutable funciona correctamente ejecutando 'ffmpeg -version'.
+     * Descarta binarios rotos o con dependencias faltantes.
+     */
+    private boolean isWorkingExecutable(String path) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder(path, "-version");
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            // Consumir la salida para evitar bloqueo del buffer
+            new BufferedReader(new InputStreamReader(process.getInputStream()))
+                .lines().forEach(l -> {});
             int exitCode = process.waitFor();
             return exitCode == 0;
         } catch (Exception e) {

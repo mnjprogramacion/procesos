@@ -33,15 +33,26 @@ public class MainFrame extends JFrame {
     private JButton compareBtn;
     private JProgressBar progressBar;
     
-    public MainFrame(String ffmpegPath, String ffprobePath) {
+    /**
+     * Constructor sin FFmpeg (GUI se abre primero, servicios se configuran después).
+     */
+    public MainFrame() {
+        initUI();
+        setButtonsEnabled(false);
+    }
+    
+    /**
+     * Inicializa los servicios de FFmpeg después de encontrar el ejecutable.
+     */
+    public void initServices(String ffmpegPath, String ffprobePath) {
         this.ffmpegPath = ffmpegPath;
         this.ffmpegService = new FFmpegService(ffmpegPath);
         this.ffprobeService = new FFprobeService(ffprobePath);
         this.fileScanner = new FileScanner(ffprobeService);
-        
         ffmpegService.setOutputListener(this::log);
-        
-        initUI();
+        setTitle("FFmpeg Video Converter - " + ffmpegPath);
+        setButtonsEnabled(true);
+        log("FFmpeg cargado: " + ffmpegPath);
     }
     
     private void initUI() {
