@@ -45,17 +45,21 @@ public class Main {
         
         System.out.println("FFmpeg encontrado: " + ffmpeg);
         
+        // Obtener ruta de ffprobe desde el locator
+        String ffprobe = locator.getFFprobePath();
+        
         // Decidir modo de ejecución
         boolean useConsole = forceConsole || GraphicsEnvironment.isHeadless();
         
         final String ffmpegFinal = ffmpeg;
+        final String ffprobeFinal = ffprobe;
         
         if (useConsole) {
-            ConsoleInterface console = new ConsoleInterface(ffmpegFinal);
+            ConsoleInterface console = new ConsoleInterface(ffmpegFinal, ffprobeFinal);
             console.run();
         } else {
             javax.swing.SwingUtilities.invokeLater(() -> {
-                MainFrame frame = new MainFrame(ffmpegFinal);
+                MainFrame frame = new MainFrame(ffmpegFinal, ffprobeFinal);
                 frame.setVisible(true);
             });
         }

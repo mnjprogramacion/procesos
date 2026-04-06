@@ -52,43 +52,6 @@ public class FFprobeService {
         return video;
     }
     
-    /**
-     * Obtiene solo la duración de un archivo (más rápido).
-     */
-    public double getDuration(File file) throws IOException {
-        List<String> command = new ArrayList<>();
-        command.add(ffprobePath);
-        command.add("-v");
-        command.add("error");
-        command.add("-show_entries");
-        command.add("format=duration");
-        command.add("-of");
-        command.add("default=noprint_wrappers=1:nokey=1");
-        command.add(file.getAbsolutePath());
-        
-        ProcessBuilder pb = new ProcessBuilder(command);
-        pb.redirectErrorStream(true);
-        Process process = pb.start();
-        
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = reader.readLine();
-        
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        
-        if (line != null && !line.isEmpty()) {
-            try {
-                return Double.parseDouble(line.trim());
-            } catch (NumberFormatException e) {
-                return 0;
-            }
-        }
-        return 0;
-    }
-    
     private void parseProperty(VideoFile video, String line) {
         // format.duration="123.456"
         if (line.startsWith("format.duration=")) {

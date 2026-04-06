@@ -16,23 +16,12 @@ import java.util.regex.*;
  */
 public class FFmpegService {
     private String ffmpegPath;
-    private String ffprobePath;
     private Consumer<String> outputListener;
     private volatile boolean cancelled = false;
     private Process currentProcess;
     
     public FFmpegService(String ffmpegPath) {
         this.ffmpegPath = ffmpegPath;
-        // Replace only the filename component to avoid corrupting directory names
-        File f = new File(ffmpegPath);
-        String probeFilename = f.getName().replace("ffmpeg", "ffprobe");
-        this.ffprobePath = f.getParent() != null
-                ? new File(f.getParent(), probeFilename).getPath()
-                : probeFilename;
-    }
-    
-    public void setFFprobePath(String path) {
-        this.ffprobePath = path;
     }
     
     public void setOutputListener(Consumer<String> listener) {
@@ -81,7 +70,7 @@ public class FFmpegService {
                 command.add(settings.getPreset());
                 
                 // CRF
-                if (settings.getCrf() > 0) {
+                if (settings.getCrf() >= 0) {
                     command.add("-crf");
                     command.add(String.valueOf(settings.getCrf()));
                 }
@@ -238,16 +227,6 @@ public class FFmpegService {
                 try {
                     psnr = Double.parseDouble(m.group(1));
                 } catch (NumberFormatException e) { }
-            }
-            // También buscar en formato PSNR y avg
-            if (line.contains("PSNR") && line.contains("average")) {
-                Pattern p2 = Pattern.compile("average:([0-9.]+)");
-                Matcher m2 = p2.matcher(line);
-                if (m2.find()) {
-                    try {
-                        psnr = Double.parseDouble(m2.group(1));
-                    } catch (NumberFormatException e) { }
-                }
             }
         }
         

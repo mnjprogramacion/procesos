@@ -70,21 +70,6 @@ public class VideoFile {
         return bitrate;
     }
     
-    /**
-     * Verifica si el archivo excede un multiplicador de bits/segundo dado.
-     * @param maxBitsPerSecondPerDuration máximo bits/segundo permitido por segundo de duración
-     */
-    public boolean exceedsBitrateThreshold(double maxBitsPerSecond) {
-        return calculateBitsPerSecond() > maxBitsPerSecond;
-    }
-    
-    /**
-     * Comprueba si la duración es menor a los segundos especificados.
-     */
-    public boolean isShorterThan(double seconds) {
-        return duration < seconds;
-    }
-    
     public String getResolution() {
         return width + "x" + height;
     }
