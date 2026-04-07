@@ -4,6 +4,7 @@ import model.VideoSettings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
 
 /**
  * Panel de configuración para las opciones de conversión.
@@ -33,6 +34,33 @@ public class SettingsPanel extends JPanel {
     private JComboBox<String> thumbFormatCombo;
     private JSpinner thumbQualitySpinner;
     
+    // Compatibilidad formato-codecs
+    private static final String[] ALL_VIDEO_CODECS = {
+        "(auto)", "libx264", "libx265", "libvpx-vp9", "mpeg4", "copy"
+    };
+    private static final String[] ALL_AUDIO_CODECS = {
+        "(auto)", "aac", "libmp3lame", "libvorbis", "libopus", "flac", "copy"
+    };
+    
+    private static final Map<String, String[]> FORMAT_VIDEO_CODECS = new HashMap<>();
+    private static final Map<String, String[]> FORMAT_AUDIO_CODECS = new HashMap<>();
+    
+    static {
+        FORMAT_VIDEO_CODECS.put("mp4",  new String[]{"(auto)", "libx264", "libx265", "mpeg4", "copy"});
+        FORMAT_VIDEO_CODECS.put("mkv",  ALL_VIDEO_CODECS);
+        FORMAT_VIDEO_CODECS.put("avi",  new String[]{"(auto)", "libx264", "mpeg4", "copy"});
+        FORMAT_VIDEO_CODECS.put("webm", new String[]{"(auto)", "libvpx-vp9", "copy"});
+        FORMAT_VIDEO_CODECS.put("mov",  new String[]{"(auto)", "libx264", "libx265", "mpeg4", "copy"});
+        FORMAT_VIDEO_CODECS.put("flv",  new String[]{"(auto)", "libx264", "copy"});
+        
+        FORMAT_AUDIO_CODECS.put("mp4",  new String[]{"(auto)", "aac", "libmp3lame", "libopus", "copy"});
+        FORMAT_AUDIO_CODECS.put("mkv",  ALL_AUDIO_CODECS);
+        FORMAT_AUDIO_CODECS.put("avi",  new String[]{"(auto)", "aac", "libmp3lame", "copy"});
+        FORMAT_AUDIO_CODECS.put("webm", new String[]{"(auto)", "libvorbis", "libopus", "copy"});
+        FORMAT_AUDIO_CODECS.put("mov",  new String[]{"(auto)", "aac", "libmp3lame", "libopus", "flac", "copy"});
+        FORMAT_AUDIO_CODECS.put("flv",  new String[]{"(auto)", "aac", "libmp3lame", "copy"});
+    }
+    
     public SettingsPanel() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -45,6 +73,34 @@ public class SettingsPanel extends JPanel {
         add(Box.createVerticalStrut(10));
         add(createThumbnailPanel());
         add(Box.createVerticalGlue());
+        
+        // Filtrar codecs según formato seleccionado
+        formatCombo.addActionListener(e -> updateCodecsForFormat());
+    }
+    
+    private void updateCodecsForFormat() {
+        String format = (String) formatCombo.getSelectedItem();
+        
+        String[] videoCodecs = FORMAT_VIDEO_CODECS.getOrDefault(format, ALL_VIDEO_CODECS);
+        String[] audioCodecs = FORMAT_AUDIO_CODECS.getOrDefault(format, ALL_AUDIO_CODECS);
+        
+        String currentVideo = (String) videoCodecCombo.getSelectedItem();
+        String currentAudio = (String) audioCodecCombo.getSelectedItem();
+        
+        videoCodecCombo.setModel(new DefaultComboBoxModel<>(videoCodecs));
+        audioCodecCombo.setModel(new DefaultComboBoxModel<>(audioCodecs));
+        
+        // Mantener selección si sigue siendo compatible, sino volver a (auto)
+        if (Arrays.asList(videoCodecs).contains(currentVideo)) {
+            videoCodecCombo.setSelectedItem(currentVideo);
+        } else {
+            videoCodecCombo.setSelectedIndex(0);
+        }
+        if (Arrays.asList(audioCodecs).contains(currentAudio)) {
+            audioCodecCombo.setSelectedItem(currentAudio);
+        } else {
+            audioCodecCombo.setSelectedIndex(0);
+        }
     }
     
     private JPanel createVideoPanel() {
@@ -94,6 +150,7 @@ public class SettingsPanel extends JPanel {
         videoCodecCombo = new JComboBox<>(new String[]{
             "(auto)", "libx264", "libx265", "libvpx-vp9", "mpeg4", "copy"
         });
+        videoCodecCombo.setPreferredSize(new Dimension(160, videoCodecCombo.getPreferredSize().height));
         gbc.gridx = 1;
         panel.add(videoCodecCombo, gbc);
         
@@ -151,6 +208,7 @@ public class SettingsPanel extends JPanel {
         audioCodecCombo = new JComboBox<>(new String[]{
             "(auto)", "aac", "libmp3lame", "libvorbis", "libopus", "flac", "copy"
         });
+        audioCodecCombo.setPreferredSize(new Dimension(160, audioCodecCombo.getPreferredSize().height));
         gbc.gridx = 1;
         panel.add(audioCodecCombo, gbc);
         
