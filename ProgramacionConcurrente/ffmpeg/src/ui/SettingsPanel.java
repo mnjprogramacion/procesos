@@ -168,7 +168,7 @@ public class SettingsPanel extends JPanel {
         panel.add(new JLabel("Sample Rate (Hz):"), gbc);
         
         sampleRateCombo = new JComboBox<>(new String[]{
-            "(original)", "44100", "48000", "22050", "16000"
+            "(original)", "48000", "44100", "22050", "16000"
         });
         gbc.gridx = 1;
         panel.add(sampleRateCombo, gbc);

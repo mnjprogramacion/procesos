@@ -394,6 +394,7 @@ public class MainFrame extends JFrame {
                     success++;
                 } catch (IOException e) {
                     log("Error: " + e.getMessage());
+                    if (ffmpegService.isCancelled()) break;
                 }
             }
             

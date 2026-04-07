@@ -35,6 +35,10 @@ public class FFmpegService {
         }
     }
     
+    public boolean isCancelled() {
+        return cancelled;
+    }
+    
     /**
      * Convierte un archivo de vídeo según la configuración.
      * @return Archivo de salida generado
@@ -120,7 +124,15 @@ public class FFmpegService {
         
         try {
             int exitCode = currentProcess.waitFor();
-            if (exitCode != 0 && !cancelled) {
+            if (cancelled) {
+                File partial = new File(output);
+                if (partial.exists()) {
+                    partial.delete();
+                    log("Archivo parcial eliminado: " + partial.getName());
+                }
+                throw new IOException("Conversión cancelada");
+            }
+            if (exitCode != 0) {
                 throw new IOException("FFmpeg terminó con código de error: " + exitCode);
             }
         } catch (InterruptedException e) {
