@@ -122,13 +122,9 @@ public class MainFrame extends JFrame {
         JButton removeBtn = new JButton("Quitar");
         removeBtn.addActionListener(e -> removeSelected());
         
-        JButton clearBtn = new JButton("Limpiar");
-        clearBtn.addActionListener(e -> fileListModel.clear());
-        
         btnPanel.add(addBtn);
         btnPanel.add(addFolderBtn);
         btnPanel.add(removeBtn);
-        btnPanel.add(clearBtn);
         
         panel.add(btnPanel, BorderLayout.SOUTH);
         
