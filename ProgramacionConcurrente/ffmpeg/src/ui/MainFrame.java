@@ -27,6 +27,10 @@ public class MainFrame extends JFrame {
     private JList<VideoFile> fileList;
     private JTextArea logArea;
     private SettingsPanel settingsPanel;
+    private BasicSettingsPanel basicSettingsPanel;
+    private CardLayout settingsCardLayout;
+    private JPanel settingsCardPanel;
+    private boolean advancedMode = false;
     private JButton convertBtn;
     private JButton thumbBtn;
     private JButton analyzeBtn;
@@ -58,7 +62,7 @@ public class MainFrame extends JFrame {
     private void initUI() {
         setTitle("FFmpeg Video Converter");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1000, 700);
+        setSize(1100, 900);
         setLocationRelativeTo(null);
         
         // Layout principal
@@ -68,11 +72,35 @@ public class MainFrame extends JFrame {
         JPanel leftPanel = createFileListPanel();
         add(leftPanel, BorderLayout.WEST);
         
-        // Panel central - Configuración
+        // Panel central - Configuración (básica / avanzada)
         settingsPanel = new SettingsPanel();
-        JScrollPane settingsScroll = new JScrollPane(settingsPanel);
-        settingsScroll.setBorder(BorderFactory.createTitledBorder("Configuración"));
-        add(settingsScroll, BorderLayout.CENTER);
+        basicSettingsPanel = new BasicSettingsPanel();
+        
+        settingsCardLayout = new CardLayout();
+        settingsCardPanel = new JPanel(settingsCardLayout);
+        
+        JScrollPane basicScroll = new JScrollPane(basicSettingsPanel);
+        JScrollPane advancedScroll = new JScrollPane(settingsPanel);
+        
+        settingsCardPanel.add(basicScroll, "basic");
+        settingsCardPanel.add(advancedScroll, "advanced");
+        settingsCardLayout.show(settingsCardPanel, "basic");
+        
+        JPanel configPanel = new JPanel(new BorderLayout());
+        
+        JPanel configHeader = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton toggleBtn = new JButton("Avanzado");
+        toggleBtn.addActionListener(e -> {
+            advancedMode = !advancedMode;
+            settingsCardLayout.show(settingsCardPanel, advancedMode ? "advanced" : "basic");
+            toggleBtn.setText(advancedMode ? "Básico" : "Avanzado");
+        });
+        configHeader.add(toggleBtn);
+        
+        configPanel.add(configHeader, BorderLayout.NORTH);
+        configPanel.add(settingsCardPanel, BorderLayout.CENTER);
+        configPanel.setBorder(BorderFactory.createTitledBorder("Configuración"));
+        add(configPanel, BorderLayout.CENTER);
         
         // Panel inferior - Log y botones
         JPanel bottomPanel = createBottomPanel();
@@ -343,7 +371,7 @@ public class MainFrame extends JFrame {
         }
         
         final String finalOutputDir = outputDir;
-        VideoSettings settings = settingsPanel.getSettings();
+        VideoSettings settings = getActiveSettings();
         
         setButtonsEnabled(false);
         progressBar.setMaximum(fileListModel.size());
@@ -391,7 +419,7 @@ public class MainFrame extends JFrame {
                 "Tiempo (HH:MM:SS o segundos):", "00:00:01");
         if (time == null) return;
         
-        VideoSettings settings = settingsPanel.getSettings();
+        VideoSettings settings = getActiveSettings();
         settings.setThumbnailTime(time);
         
         new Thread(() -> {
@@ -555,6 +583,10 @@ public class MainFrame extends JFrame {
                 }
             }).start();
         }
+    }
+    
+    private VideoSettings getActiveSettings() {
+        return advancedMode ? settingsPanel.getSettings() : basicSettingsPanel.getSettings();
     }
     
     private void setButtonsEnabled(boolean enabled) {
